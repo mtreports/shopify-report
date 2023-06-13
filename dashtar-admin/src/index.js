@@ -14,10 +14,14 @@ import { SidebarProvider } from "./context/SidebarContext";
 import ThemeSuspense from "./components/theme/ThemeSuspense";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
-
 import "./i18n";
-// import * as serviceWorker from './serviceWorker';
 
+
+// import * as serviceWorker from './serviceWorker';
+// const countData = shopify.api.rest.Product.count({
+//   session: 'shpua_da37737532a8559c828ee4239c18c761',
+// });
+// console.log(countData);
 // if (process.env.NODE_ENV !== "production") {
 //   const axe = require("react-axe");
 //   axe(React, ReactDOM, 1000);

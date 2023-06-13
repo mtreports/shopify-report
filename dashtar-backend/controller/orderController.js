@@ -1,5 +1,5 @@
 const Order = require("../models/Order");
-
+const shopify = require("../api/shopify.js");
 const getAllOrders = async (req, res) => {
   const { customerName, status, page, limit, day, startDate, endDate } =
     req.query;
@@ -253,6 +253,10 @@ const getDashboardCount = async (req, res) => {
 };
 
 const getDashboardAmount = async (req, res) => {
+  const countData = await shopify.api.rest.Product.count({
+    session: res.locals.shopify.session,
+    });
+
   // console.log('total')
   let week = new Date();
   week.setDate(week.getDate() - 10);
@@ -323,12 +327,7 @@ const getDashboardAmount = async (req, res) => {
     // });
 
     res.send({
-      totalAmount:
-        totalAmount.length === 0
-          ? 0
-          : parseFloat(totalAmount[0].tAmount).toFixed(2),
-      thisMonthlyOrderAmount: thisMonthlyOrderAmount[0]?.total,
-      ordersData: orderFilteringData,
+      totalAmount:countData.count
     });
   } catch (err) {
     // console.log('err',err)

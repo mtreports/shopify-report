@@ -259,6 +259,27 @@ const updatedStatus = async (req, res) => {
   }
 };
 
+const insertalldata = async (req, res) => {
+  try {
+    const isAdded = await Admin.findOne({ email: req.body.shop });
+    if (isAdded) {
+      return res.status(403).send({
+        message: "This shop already Added!",
+      });
+    } else {
+      const shopdata = new Admin({
+        shop_data: req.body.shop_data,
+      });
+      const data = await shopdata.save();
+      res.send("all data inserted successfully");
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   registerAdmin,
   loginAdmin,

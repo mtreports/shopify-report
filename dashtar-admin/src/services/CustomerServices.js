@@ -25,6 +25,7 @@ const CustomerServices = {
     return requests.put(`/customer/${id}`, body);
   },
 
+  
   deleteCustomer: async (id) => {
     return requests.delete(`/customer/${id}`);
   },

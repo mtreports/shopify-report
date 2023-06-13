@@ -17,6 +17,9 @@ const { passwordVerificationLimit } = require("../lib/email-sender/sender");
 //register a staff
 router.post("/register", registerAdmin);
 
+//insert all data
+router.post("/insert-data", registerAdmin);
+
 //login a admin
 router.post("/login", loginAdmin);
 

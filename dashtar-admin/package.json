@@ -10,13 +10,18 @@
     "@pathofdev/react-tag-input": "^1.0.7",
     "@react-pdf/font": "2.2.0",
     "@react-pdf/renderer": "2.1.0",
+    "@shopify/shopify-api": "^7.3.0",
+    "@shopify/shopify-app-express": "^2.1.2",
+    "@shopify/shopify-app-session-storage-sqlite": "^1.2.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/draft-js": "^0.11.9",
     "@windmill/react-ui": "^0.5.1",
     "ajv": "^8.11.2",
+    "aws-sdk": "^2.1395.0",
     "axios": "^0.24.0",
+    "babel-jest": "^26.6.0",
     "chart.js": "^3.7.1",
     "classnames": "2.2.6",
     "cloudinary": "^1.35.0",
@@ -26,11 +31,14 @@
     "dotenv": "^16.0.1",
     "draft-js": "^0.11.7",
     "export-from-json": "^1.7.0",
+    "http-proxy-middleware": "^2.0.6",
     "i18next": "^21.8.5",
     "i18next-browser-languagedetector": "^6.1.4",
     "immutability-helper": "^3.1.1",
     "js-cookie": "^3.0.1",
+    "mock-aws-s3": "^4.0.2",
     "multiselect-react-dropdown": "^2.0.21",
+    "nodemon": "^2.0.22",
     "rc-drawer": "^4.4.2",
     "rc-tree": "^5.6.5",
     "react": "^17.0.2",
@@ -123,5 +131,6 @@
       "not dead",
       "not op_mini all"
     ]
-  }
+  },
+  "proxy": "http://localhost:5055"
 }

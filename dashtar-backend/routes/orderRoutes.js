@@ -1,4 +1,5 @@
 const express = require("express");
+const shopify = require("../api/shopify.js");
 const router = express.Router();
 const {
   getAllOrders,
@@ -26,7 +27,7 @@ router.get("/dashboard-recent-order", getDashboardRecentOrder);
 router.get("/dashboard-count", getDashboardCount);
 
 // dashboard order amount
-router.get("/dashboard-amount", getDashboardAmount);
+router.get("/dashboard-amount", shopify.validateAuthenticatedSession(), getDashboardAmount);
 
 // chart data for product
 router.get("/best-seller/chart", bestSellerProductChart);

@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const instance = axios.create({
-  baseURL: `${process.env.REACT_APP_API_BASE_URL}`,
+  baseURL: `http://localhost:4000/api`,
   timeout: 50000,
   headers: {
     Accept: 'application/json',

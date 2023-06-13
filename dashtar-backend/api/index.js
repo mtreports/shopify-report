@@ -16,9 +16,28 @@ const settingRoutes = require("../routes/settingRoutes");
 const currencyRoutes = require("../routes/currencyRoutes");
 const languageRoutes = require("../routes/languageRoutes");
 const { isAuth, isAdmin } = require("../config/auth");
+const {GDPRWebhookHandlers} = require('./gdpr.js');
+const shopify = require("./shopify.js");
+const getProducts = require("./getproduct.js");
 
 connectDB();
 const app = express();
+app.use(cors());
+
+const PORT = process.env.PORT || 5000;
+
+
+app.get(shopify.config.auth.path, shopify.auth.begin());
+app.get(
+  shopify.config.auth.callbackPath,
+  shopify.auth.callback(),
+  shopify.redirectToShopifyOrAppRoot(),
+);
+app.post(
+  shopify.config.webhooks.path,
+  shopify.processWebhooks({ webhookHandlers: GDPRWebhookHandlers }),
+);
+
 
 // We are using this for the express-rate-limit middleware
 // See: https://github.com/nfriedly/express-rate-limit
@@ -27,7 +46,54 @@ app.set("trust proxy", 1);
 
 app.use(express.json({ limit: "4mb" }));
 app.use(helmet());
-app.use(cors());
+
+  
+// app.use("/api/*", shopify.validateAuthenticatedSession());
+
+
+app.get('/api/products/count', shopify.validateAuthenticatedSession(), async (_req, res) => {
+//  console.log(res.locals.shopify.session);
+  const countData = await shopify.api.rest.Product.count({
+  session: res.locals.shopify.session,
+  });
+
+  res.status(200).send(countData);
+  });
+
+app.get("/api/getproducts", shopify.validateAuthenticatedSession(), async (req, res) => {
+  const session = res.locals.shopify.session;
+  const query = `{
+    products(first: 6) {
+    nodes {
+      id
+      title
+      variants(first: 100) {
+        nodes {
+          id
+          price
+          title
+        }
+      }
+      images(first: 1) {
+        nodes {
+          url
+        }
+      }
+      options(first: 10) {
+        name
+        values
+      }
+    }
+  }
+}`;
+  
+    const response =  await getProducts(session, query);
+  const productdata = response.body.data.products;
+  // const countData = await shopify.api.rest.Product.count({
+  //   session: res.locals.shopify.session,
+  // });
+  res.status(200).send(productdata);
+});
 
 
 const _dirname = path.dirname("");
@@ -35,18 +101,12 @@ const buildPath = path.join(_dirname ,"../dashtar-admin/build");
 
 app.use(express.static (buildPath));
 
-app.get("/*", function (req, res){
-   res.sendFile( path.join(_dirname, "../dashtar-admin/build/index.html"),
-    function (err) { 
-      if (err) { res.status (500).send(err); } }
-       );
-       });
-
 
 //root route
-app.get("/", (req, res) => {
-  res.send("App works properly!");
-});
+// app.get("/", (req, res) => {
+//   res.send("App works properly!");
+// });
+
 
 //this for route will need for store front, also for admin dashboard
 app.use("/api/products/", productRoutes);
@@ -69,8 +129,24 @@ app.use((err, req, res, next) => {
   res.status(400).json({ message: err.message });
 });
 
-const PORT = process.env.PORT || 5000;
 
 // app.listen(PORT, () => console.log(`server running on port ${PORT}`));
+app.use("/*", 
+shopify.validateAuthenticatedSession(),
+async (_req, res, _next) => {
+  const shop = res.locals.shopify.session.shop;
+  const accesstoken = res.locals.shopify.session.accessToken;
+  console.log(_req);
+  res.send("App works properly!");
+  //  return res.redirect(301, "http://localhost:4000");
+}
+);
+
+app.get("/*", function (req, res){
+   res.sendFile( path.join(_dirname, "../dashtar-admin/build/index.html"),
+    function (err) { 
+      if (err) { res.status (500).send(err); } }
+       );
+       });
 
 app.listen(PORT, () => console.log(`server running on port ${PORT}`));
